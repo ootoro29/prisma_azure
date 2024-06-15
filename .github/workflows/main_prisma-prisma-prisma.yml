@@ -26,19 +26,9 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present
-        env:
-          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
-
-      - name: Copy artifact for deployment job
-        run: |
-          mkdir deploy
-          cp -r ./.next/standalone/. ./deploy
-          cp -r ./public ./deploy
-          cp -r ./prisma ./deploy
-          cp -r ./.next/static/. ./deploy/.next/static
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./deploy -r
+        run: zip release.zip ./* -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
@@ -67,9 +57,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_6AE1AA371C874F0ABC099B84061B99D0 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F3A2AA8E4E994D1BB35E29FAE810BC95 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_8F548D0FEBBE4D6396781699D2A508FB }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1A03FB84A9204AFDB93E7583A21A0197 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_FD14A469EB5347209DD68594241343B2 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A7ECE0544198489B9486328B82874634 }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -77,5 +67,5 @@ jobs:
         with:
           app-name: 'prisma-prisma-prisma'
           slot-name: 'Production'
-          package: ./deploy
+          package: .
           
