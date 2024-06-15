@@ -1,95 +1,58 @@
+"use client"
 import Image from "next/image";
 import styles from "./page.module.css";
+import { FormEvent, useState } from "react";
+
+type Article = {
+  id:string
+  title:string;
+  content:string;
+  writer:string;
+};
+
 
 export default function Home() {
+  const [articles,setArticles] = useState<Article[]>([]);
+    const [inputArticle,setInputArticle] = useState<Article>({id:"0",title:"",content:"",writer:""});
+
+    const onSubmitHandler = async(e:FormEvent) => {
+        e.preventDefault();
+        const res = await fetch('/api/article',{
+            method:"POST",
+            headers: {
+                'Content-Type':"application/json"
+            },
+            body: JSON.stringify({title:inputArticle.title,content:inputArticle.content,writer:"ootoro"})
+        })
+        const data = await res.json() as Article;
+        console.log(data);
+        setArticles((prev) => [...prev,{id:data.id,title:data.title,content:data.content,writer:data.writer}])
+        setInputArticle({id:"0",title:"",content:"",writer:"ootoro"});
+    }
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    <div>
+      <form onSubmit={onSubmitHandler}>
+          <input type="text" name="title" value={inputArticle.title} 
+                  onChange={(e) => {
+                      const changedInputArticle:Article = {id:inputArticle.id,title:e.target.value,content:inputArticle.content,writer:inputArticle.writer}
+                      setInputArticle(changedInputArticle);
+                  }} />
+          <input type="text" name="content" value={inputArticle.content} 
+                  onChange={(e) => {
+                      const changedInputArticle:Article = {id:inputArticle.id,title:inputArticle.title,content:e.target.value,writer:inputArticle.writer}
+                      setInputArticle(changedInputArticle);
+                  }} />
+          <button type="submit">送信</button>
+      </form>
+      {
+        articles.map((article,i) => (
+          <div key={i}>
+            <p>{article.title}</p>
+            <p>{article.content}</p>
+            <p>{article.writer}</p>
+          </div>
+        ))
+      }
+    </div>
   );
 }
