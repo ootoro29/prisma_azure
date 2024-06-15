@@ -21,14 +21,33 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: npm install, build, and test
+      - name: npm install
         run: |
           npm install
-          npm run build --if-present
-          npm run test --if-present
+      
+      - name: prisma generate
+        run: |
+          rm -rf node_modules/.prisma
+          npx prisma generate
+        env:
+          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+
+      - name: npm build, and test
+        run: |
+            npm install
+            npm run build --if-present
+            npm run test --if-present
+
+      - name: Copy artifact for deployment job
+        run: |
+          mkdir deploy
+          cp -r ./.next/standalone/. ./deploy
+          cp -r ./public ./deploy
+          cp -r ./prisma/schema.prisma ./deploy/prisma
+          cp -r ./.next/static/. ./deploy/.next/static
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+        run: zip release.zip ./deploy -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
@@ -57,9 +76,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_4C5C5293BF8A46CDB8E906D34AD77052 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_5B77A646691D44BFBB7C7C2E133F3C02 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_071D24F622594E938BC482B45B45D158 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_3A92114238684AF89D2D3ED23F56FE69 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_3C2168449A834750A61F41C5FD2EACCC }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_8F9CDCFF9C304CC59C0065CE5970CFB9 }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -67,5 +86,5 @@ jobs:
         with:
           app-name: 'prisma-azure'
           slot-name: 'Production'
-          package: .
+          package: ./deploy
           
