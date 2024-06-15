@@ -2,6 +2,7 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 import { FormEvent, useEffect, useState } from "react";
+import { prisma } from "./auth";
 
 type Article = {
   id:string
@@ -43,6 +44,7 @@ export default function Home() {
     }
   return (
     <div>
+      <p>{(prisma) && "prisma on"}</p>
       <form onSubmit={onSubmitHandler}>
           <input type="text" name="title" value={inputArticle.title} 
                   onChange={(e) => {
