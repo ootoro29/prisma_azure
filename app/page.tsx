@@ -1,7 +1,7 @@
 "use client"
 import Image from "next/image";
 import styles from "./page.module.css";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 type Article = {
   id:string
@@ -14,6 +14,18 @@ type Article = {
 export default function Home() {
   const [articles,setArticles] = useState<Article[]>([]);
     const [inputArticle,setInputArticle] = useState<Article>({id:"0",title:"",content:"",writer:""});
+    useEffect(() => {
+      const dataFetch = async() => {
+          await fetch(`/api/article`,{method:"GET"})
+          .then(async(res) => {
+              const articles = await res.json() as Article[];
+              articles.map((article) => {
+                  setArticles((prev) => [...prev,article])
+              })
+          });
+      }
+      dataFetch();
+  },[]);
 
     const onSubmitHandler = async(e:FormEvent) => {
         e.preventDefault();
