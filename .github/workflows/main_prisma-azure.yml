@@ -29,6 +29,11 @@ jobs:
         run: |
           rm -rf node_modules/.prisma
           npx prisma generate
+        env:
+          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+
+      - name: prisma migrate
+        run: |
           npx prisma migrate deploy
         env:
           DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
