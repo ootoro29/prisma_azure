@@ -6,7 +6,7 @@ export const GET = async(req:NextRequest) => {
         const article = await prisma.article.findMany();
         return new NextResponse(JSON.stringify(article),{status:200});
     } catch(e){
-        return new NextResponse("error:",{status:500});
+        return new NextResponse(JSON.stringify(e),{status:500});
     }
 }
 export const POST = async(req:NextRequest) => {
