@@ -2,7 +2,6 @@ import { pool } from "./db";
 import { PrismaClient } from "@prisma/client";
 //import { PrismaPg } from "@prisma/adapter-pg";
 
-
 const globalForPrisma = global as unknown as { prisma: PrismaClient | undefined };
 
 export const prisma = globalForPrisma.prisma || new PrismaClient();
