@@ -27,7 +27,7 @@ jobs:
 
       - name: prisma generate
         run: |
-          rm -rf node_modules/.prisma
+          rm -rf ./prisma
           npm run postinstall
           npx prisma generate
           npx prisma migrate deploy
