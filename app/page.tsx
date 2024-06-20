@@ -46,8 +46,8 @@ export default function Home() {
     }
   return (
     <div>
-      <button onClick={() => signIn()}>サインイン</button>
-      <button onClick={() => signOut()}>サインアウト</button>
+      <button onClick={() => signIn()}>サインインだヨっ</button>
+      <button onClick={() => signOut()}>サインアウトしろっ</button>
       <p>{JSON.stringify(session)}</p>
       <p>{(prisma) && "prisma on"}</p>
       <form onSubmit={onSubmitHandler}>
