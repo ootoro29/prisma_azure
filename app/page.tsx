@@ -3,6 +3,7 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import { FormEvent, useEffect, useState } from "react";
 import { prisma } from "./auth";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 type Article = {
   id:string
@@ -13,6 +14,7 @@ type Article = {
 
 
 export default function Home() {
+  const {data:session,status} = useSession();
   const [articles,setArticles] = useState<Article[]>([]);
     const [inputArticle,setInputArticle] = useState<Article>({id:"0",title:"",content:"",writer:""});
     useEffect(() => {
@@ -44,6 +46,9 @@ export default function Home() {
     }
   return (
     <div>
+      <button onClick={() => signIn()}>サインイン</button>
+      <button onClick={() => signOut()}>サインアウト</button>
+      <p>{JSON.stringify(session)}</p>
       <p>{(prisma) && "prisma on"}</p>
       <form onSubmit={onSubmitHandler}>
           <input type="text" name="title" value={inputArticle.title} 
